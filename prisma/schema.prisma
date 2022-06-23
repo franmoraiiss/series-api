@@ -10,26 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Product {
+model Tabela {
   id       String   @id @default(uuid())
   name     String
   bar_code String   @unique
   price    Decimal
   created  DateTime @default(now())
 
-  @@map("products")
-}
-
-model Categorias {
-  id   String @id @default(uuid())
-  name String
-
-  @@map("categorias")
-}
-
-model Users {
-  id   String @id @default(uuid())
-  name String
-
-  @@map("users")
+  @@map("nome_da_tabela")
 }
