@@ -90,7 +90,7 @@ model Episodio {
   descricao               String     @db.VarChar(45)
   nome                    String     @db.VarChar(45)
   nota                    Float
-  data_estreia            String     @db.VarChar(45)
+  data_estreia            DateTime
   temporadas_idTemporadas Int
   temporadas              Temporadas @relation(fields: [temporadas_idTemporadas], references: [idTemporadas])
   temporadas_idSeries     Int
@@ -105,10 +105,10 @@ model Elenco {
 
   personagem String? @db.VarChar(45)
 
-  series_idSeries Int
-  series          Series @relation(fields: [series_idSeries], references: [idSeries])
+  serie_idSerie Int
+  series        Series @relation(fields: [serie_idSerie], references: [idSeries])
 
-  @@id([pessoa_idPessoa, series_idSeries])
+  @@id([pessoa_idPessoa, serie_idSerie])
   @@map("elenco")
 }
 

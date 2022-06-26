@@ -1,29 +1,29 @@
 Arguments: 
-  /home/francisco/.nvm/versions/node/v16.15.1/bin/node /home/francisco/.nvm/versions/node/v16.15.1/bin/yarn add @types/ts-node-dev
+  C:\Program Files\nodejs\node.exe C:\Users\gusta\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add prisma ts-node-dev typescript @types/expression -D
 
 PATH: 
-  /home/francisco/.vscode-server/bin/30d9c6cd9483b2cc586687151bcbcd635f373630/bin/remote-cli:/home/francisco/.nvm/versions/node/v16.15.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/iCLS/:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/iCLS/:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/DAL:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/DAL:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/IPT:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/IPT:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Docker/Docker/resources/bin:/mnt/c/ProgramData/DockerDesktop/version-bin:/mnt/c/Users/francisco/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/francisco/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin
+  C:\Python310\Scripts\;C:\Python310\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Java\jdk-11.0.7\bin;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\ProgramData\chocolatey\bin;D:\Git\cmd;D:\php;C:\Program Files\nodejs\;C:\ProgramData\ComposerSetup\bin;C:\Users\gusta\AppData\Local\Programs\Python\Python310\Scripts\;C:\Users\gusta\AppData\Local\Programs\Python\Python310\;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\gusta\AppData\Local\Microsoft\WindowsApps;;C:\Users\gusta\AppData\Local\Microsoft VS Code\bin;C:\Users\gusta\AppData\Roaming\npm;C:\Users\gusta\AppData\Roaming\Composer\vendor\bin
 
 Yarn version: 
-  1.22.19
+  1.22.17
 
 Node version: 
-  16.15.1
+  16.14.0
 
 Platform: 
-  linux x64
+  win32 x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@types%2fts-node-dev: Not found
-      at Request.params.callback [as _callback] (/home/francisco/.nvm/versions/node/v16.15.1/lib/node_modules/yarn/lib/cli.js:66145:18)
-      at Request.self.callback (/home/francisco/.nvm/versions/node/v16.15.1/lib/node_modules/yarn/lib/cli.js:140890:22)
-      at Request.emit (node:events:527:28)
-      at Request.<anonymous> (/home/francisco/.nvm/versions/node/v16.15.1/lib/node_modules/yarn/lib/cli.js:141862:10)
-      at Request.emit (node:events:527:28)
-      at IncomingMessage.<anonymous> (/home/francisco/.nvm/versions/node/v16.15.1/lib/node_modules/yarn/lib/cli.js:141784:12)
-      at Object.onceWrapper (node:events:641:28)
-      at IncomingMessage.emit (node:events:539:35)
-      at endReadableNT (node:internal/streams/readable:1345:12)
+  Error: https://registry.yarnpkg.com/@types%2fexpression: Not found
+      at Request.params.callback [as _callback] (C:\Users\gusta\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:67029:18)
+      at Request.self.callback (C:\Users\gusta\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140883:22)
+      at Request.emit (node:events:520:28)
+      at Request.<anonymous> (C:\Users\gusta\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141855:10)
+      at Request.emit (node:events:520:28)
+      at IncomingMessage.<anonymous> (C:\Users\gusta\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141777:12)
+      at Object.onceWrapper (node:events:639:28)
+      at IncomingMessage.emit (node:events:532:35)
+      at endReadableNT (node:internal/streams/readable:1346:12)
       at processTicksAndRejections (node:internal/process/task_queues:83:21)
 
 npm manifest: 
@@ -36,13 +36,14 @@ npm manifest:
       "dev": "ts-node-dev --exit-child --transpile-only --ignore-watch node_modules src/server.ts"
     },
     "devDependencies": {
-      "prisma": "^3.15.2",
-      "ts-node-dev": "^2.0.0"
+      "prisma": "^3.15.2"
     },
     "dependencies": {
       "@prisma/client": "3.15.2",
       "@types/express": "^4.17.13",
-      "express": "^4.18.1"
+      "express": "^4.18.1",
+      "ts-node-dev": "^2.0.0",
+      "typescript": "^4.7.4"
     }
   }
 
@@ -903,6 +904,11 @@ Lockfile:
     dependencies:
       media-typer "0.3.0"
       mime-types "~2.1.24"
+  
+  typescript@^4.7.4:
+    version "4.7.4"
+    resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
+    integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
   
   unpipe@1.0.0, unpipe@~1.0.0:
     version "1.0.0"
