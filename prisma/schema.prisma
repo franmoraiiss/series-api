@@ -10,12 +10,129 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Tabela {
-  id       String   @id @default(uuid())
-  name     String
-  bar_code String   @unique
-  price    Decimal
-  created  DateTime @default(now())
+model Series {
+  idSeries        Int      @id
+  nome            String   @db.VarChar(50)
+  nota            Float
+  descricao       String   @db.VarChar(45)
+  imagem          String?  @db.VarChar(45)
+  data_lancamento DateTime
+  criador         String   @db.VarChar(45)
+  pais_origem     String?  @db.VarChar(45)
+  em_producao     Boolean
 
-  @@map("nome_da_tabela")
+  Generos_Series Generos_Series[]
+  Temporadas     Temporadas[]
+  Episodio       Episodio[]
+  Elenco         Elenco[]
+  Trailer        Trailer[]
+  Criador_Serie  Criador_Serie[]
+  @@map("series")
+}
+
+model Pessoa {
+  idPessoa         Int       @id
+  nome             String    @db.VarChar(45)
+  foto             String    @db.VarChar(45)
+  biografia        String?   @db.VarChar(45)
+  genero           Int       @db.SmallInt
+  data_nascimento  DateTime
+  data_morte       DateTime?
+  lugar_nascimento String    @db.VarChar(45)
+  popularidade     Float?
+
+  Elenco        Elenco[]
+  Criador_Serie Criador_Serie[]
+  @@map("pessoas")
+}
+
+model Generos {
+  idGeneros Int    @id
+  nome      String @db.VarChar(45)
+
+  Generos_Series Generos_Series[]
+  @@map("generos")
+}
+
+model Plataforma {
+  idPlataforma Int     @id
+  nome         String? @db.VarChar(45)
+
+  @@map("plataforma")
+}
+
+model Generos_Series {
+  series_idSeries   Int
+  series            Series  @relation(fields: [series_idSeries], references: [idSeries])
+  generos_idGeneros Int
+  generos           Generos @relation(fields: [generos_idGeneros], references: [idGeneros])
+
+  @@id([series_idSeries, generos_idGeneros])
+  @@map("generos_series")
+}
+
+model Temporadas {
+  idTemporadas       Int     @id
+  nome               String  @db.VarChar(45)
+  descricao          String  @db.VarChar(45)
+  link_foto          String? @db.VarChar(45)
+  quantidade_ep      Int     @db.SmallInt
+  numero_temporarada Int
+  series_idSeries    Int
+  series             Series  @relation(fields: [series_idSeries], references: [idSeries])
+
+  Episodio Episodio[]
+  @@map("temporadas")
+}
+
+model Episodio {
+  idEpisodio              Int        @id
+  descricao               String     @db.VarChar(45)
+  nome                    String     @db.VarChar(45)
+  nota                    Float
+  data_estreia            String     @db.VarChar(45)
+  temporadas_idTemporadas Int
+  temporadas              Temporadas @relation(fields: [temporadas_idTemporadas], references: [idTemporadas])
+  temporadas_idSeries     Int
+  series                  Series     @relation(fields: [temporadas_idSeries], references: [idSeries])
+
+  @@map("episodio")
+}
+
+model Elenco {
+  pessoa_idPessoa Int
+  pessoa          Pessoa @relation(fields: [pessoa_idPessoa], references: [idPessoa])
+
+  personagem String? @db.VarChar(45)
+
+  series_idSeries Int
+  series          Series @relation(fields: [series_idSeries], references: [idSeries])
+
+  @@id([pessoa_idPessoa, series_idSeries])
+  @@map("elenco")
+}
+
+model Trailer {
+  idTrailer       Int     @id
+  nome            String? @db.VarChar(45)
+  key_trailer     String? @db.VarChar(45)
+  tipo            String? @db.VarChar(45)
+  series_idSeries Int
+  series          Series  @relation(fields: [series_idSeries], references: [idSeries])
+
+  website_plataform String? @db.VarChar(45)
+
+  @@map("trailer")
+}
+
+model Criador_Serie {
+  pessoa_idAtores Int
+  pessoa          Pessoa @relation(fields: [pessoa_idAtores], references: [idPessoa])
+
+  serie_idSeries Int
+  series         Series @relation(fields: [serie_idSeries], references: [idSeries])
+
+
+  @@id([pessoa_idAtores, serie_idSeries])
+  @@map("criador_serie")
 }
