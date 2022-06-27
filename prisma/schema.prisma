@@ -14,7 +14,7 @@ model Series {
   idSeries        Int      @id
   nome            String   @db.VarChar(50)
   nota            Float
-  descricao       String   @db.VarChar(45)
+  descricao       String   @db.Text
   imagem          String?  @db.VarChar(45)
   data_lancamento DateTime
   criador         String   @db.VarChar(45)
@@ -33,12 +33,12 @@ model Series {
 model Pessoa {
   idPessoa         Int       @id
   nome             String    @db.VarChar(45)
-  foto             String    @db.VarChar(45)
-  biografia        String?   @db.VarChar(45)
+  foto             String?   @db.VarChar(45)
+  biografia        String?   @db.Text
   genero           Int       @db.SmallInt
-  data_nascimento  DateTime
+  data_nascimento  DateTime?
   data_morte       DateTime?
-  lugar_nascimento String    @db.VarChar(45)
+  lugar_nascimento String?   @db.VarChar(45)
   popularidade     Float?
 
   Elenco        Elenco[]
@@ -74,7 +74,7 @@ model Generos_Series {
 model Temporadas {
   idTemporadas       Int     @id
   nome               String  @db.VarChar(45)
-  descricao          String  @db.VarChar(45)
+  descricao          String  @db.Text
   link_foto          String? @db.VarChar(45)
   quantidade_ep      Int     @db.SmallInt
   numero_temporarada Int
@@ -87,7 +87,7 @@ model Temporadas {
 
 model Episodio {
   idEpisodio              Int        @id
-  descricao               String     @db.VarChar(45)
+  descricao               String     @db.Text
   nome                    String     @db.VarChar(45)
   nota                    Float
   data_estreia            DateTime
