@@ -17,7 +17,6 @@ model Series {
   descricao       String   @db.VarChar(45)
   imagem          String?  @db.VarChar(45)
   data_lancamento DateTime
-  criador         String   @db.VarChar(45)
   pais_origem     String?  @db.VarChar(45)
   em_producao     Boolean
 
