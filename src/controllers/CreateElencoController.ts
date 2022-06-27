@@ -8,7 +8,7 @@ export class CreateElencoController {
     const elenco = await prismaClient.elenco.create({
       data: {
         pessoa_idPessoa: idPessoa,
-        series_idSeries: idSeries,
+        serie_idSerie: idSeries,
         personagem: personagem,
       },
     });
