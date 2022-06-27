@@ -78,40 +78,35 @@ async function createElenco(idPessoa: number, idSerie: number, character: string
 
 }
 
+async function createEpisode(episodeNumber: number, idSerie: number, season_number: number, idSeason: number) {
 
-//Definindo o tipo de Temporada para recebermos o vetor de temporada na function createSeason
-// type Season = {
-//   idSeason: number,
-//   nome: string,
-//   descricao: string,
-//   link_foto: string,
-//   quantidade_ep: number,
-//   numero_temporarada: number,
-//   series_idSeries: number
-// }
+  try {
 
-//Falhou a primeira tentativa, retorna idseason como indefinido
-// async function createSeason(seasons: Season[]) {
-//   // console.log(response)
-//   seasons.map(season => {
+    const episode = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/season/${season_number}/episode/${episodeNumber}?api_key=${api_key}`)
 
-//   })
-//   for (const season in seasons) {
-//     const idSeason = seasons[season].idSeason;
-//     console.log(seasons[season])
+    await prismaClient.episodio.create({
+      data: {
+        idEpisodio: episode.data.id,
+        numeroEpisodio: episode.data.episode_number,
+        nome: episode.data.name,
+        descricao: episode.data.overview,
+        data_estreia: new Date(episode.data.air_date),
+        nota: episode.data.vote_average,
+        temporadas_idSeries: idSerie,
+        temporadas_idTemporadas: idSeason,
+      },
+    });
+  }
+  catch (error) {
+    console.log(error)
+  }
+}
 
-//   }
-
-// }
-
-//Chamando a temporada inteira
-
-//
 async function createSeason(season_number: number, idSerie: number, totalEp: number) {
   try {
     const seasons = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/season/${season_number}?api_key=${api_key}`)
 
-    // Cria a tabela 
+    // Cria a temporada
     await prismaClient.temporadas.create({
       data: {
         idTemporadas: seasons.data.id,
@@ -126,14 +121,16 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
 
     //Cadastrando estrelas da serie. Busca cada id e manda criar
     for (const episode in seasons.data.episodes) {
-      const stars = seasons.data.episodes[episode].guest_stars;
-      for (const star in stars) {
-        const idStar = stars[star].id
-        await createPeople(idStar, idPessoasCadastras);
-        createElenco(idStar, idSerie, stars[star].character)
-        // console.log(idStar, idSerie, stars[star].character);
-        // console.log(stars[star].id);
-      }
+      // createEpisode(seasons.data.episodes[episode].episode_number, idSerie, season_number, seasons.data.id);
+
+      // const stars = seasons.data.episodes[episode].guest_stars;
+      // for (const star in stars) {
+      //   const idStar = stars[star].id
+      //   await createPeople(idStar, idPessoasCadastras);
+      //   createElenco(idStar, idSerie, stars[star].character)
+      //   // console.log(idStar, idSerie, stars[star].character);
+      //   // console.log(stars[star].id);
+      // }
 
     }
 
@@ -144,22 +141,51 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
   }
 }
 
+async function createPlataforma(idPlataforma: number, nomePlataforma: string) {
+  try {
+
+    await prismaClient.plataforma.create({
+      data: {
+        idPlataforma: idPlataforma,
+        nome: nomePlataforma,
+      },
+    });
+  }
+  catch (error) {
+    console.log(error);
+  }
+
+}
+
+//Criar Relação de plataforma e series tabela n existe
+async function createRelationPlataformaSerie(idPlataforma: number, idSeason: number) {
+  try {
+
+    await prismaClient.plataforma_Series.create({
+      data: {
+        series_idSeries: idSeason,
+        plataforma_idPlataforma: idPlataforma,
+      },
+    });
+  } catch (error) {
+    // console.log(error)
+  }
+}
 
 //Buscar a serie pelo ID. 
-async function getSerieById(id: number) {
-  const response = await axios.get(`https://api.themoviedb.org/3/tv/${id}?api_key=${api_key}`);
+async function getSerieById(idSeason: number) {
+  const response = await axios.get(`https://api.themoviedb.org/3/tv/${idSeason}?api_key=${api_key}`);
 
   //Criar a serie passando os dados dela
   try {
-    const serie = await prismaClient.series.create({
+    await prismaClient.series.create({
       data: {
-        idSeries: id,
+        idSeries: idSeason,
         nome: response.data.name,
         nota: response.data.vote_average,
         descricao: response.data.overview,
         imagem: response.data.poster_path,
         data_lancamento: new Date(response.data.first_air_date),
-        criador: "default",
         pais_origem: response.data.origin_country[0],
         em_producao: response.data.in_production,
       }
@@ -171,30 +197,26 @@ async function getSerieById(id: number) {
   }
 
   //Receber o array de criadores, pegando os id e verificando se ja tem cadastro.
-  for (const criador in response.data.created_by) {
-    const idCriador = response.data.created_by[criador].id
-    createPeople(idCriador, idPessoasCadastras); // console.log(idCriador, idPessoasCadastras);
-    createRelationCriador(idCriador, response.data.id)
-  }
+  // for (const criador in response.data.created_by) {
+  //   const idCriador = response.data.created_by[criador].id
+  //   createPeople(idCriador, idPessoasCadastras); // console.log(idCriador, idPessoasCadastras);
+  //   createRelationCriador(idCriador, response.data.id)
+  // }
 
-  //Adicionar TemporadasSerie
-  for (const season in response.data.seasons) {
-    const idSeason = response.data.seasons[season].id
-    createSeason(response.data.seasons[season].season_number, response.data.id, response.data.seasons[season].episode_count)
-  }
-
-
-  //Adicionar elencoSerie
-
-
-
-
+  // //Adicionar TemporadasSerie
+  // for (const season in response.data.seasons) {
+  //   const idSeason = response.data.seasons[season].id
+  //   createSeason(response.data.seasons[season].season_number, response.data.id, response.data.seasons[season].episode_count)
+  // }
 
   // console.log("Criado com sucesso")
+  // console.log(response.data.networks)
+  for (const network in response.data.networks) {
+    await createPlataforma(response.data.networks[network].id, response.data.networks[network].name);
+    createRelationPlataformaSerie(response.data.networks[network].id, idSeason);
 
+  }
 }
-
-
 
 //Classe que vai chamar as series populares e depois chamar as funçoes para cadastrar todos os dados.
 export class GetSeriesTmdb {
@@ -219,13 +241,13 @@ export class GetSeriesTmdb {
         // }
 
 
-        const criadoresSerie = response.data.created_by;
+        // const criadoresSerie = response.data.created_by;
 
-        for (const criador in criadoresSerie) {
-          //Pegar os id dos criadores, ver se ja tem cadastrado, se não tiver realizar a consulta e salvar o registro.
-          createPeople(criadoresSerie[criador].id, idPessoasCadastras)
-        }
-        // console.log(criadoresSerie[0]);
+        // // for (const criador in criadoresSerie) {
+        // //   //Pegar os id dos criadores, ver se ja tem cadastrado, se não tiver realizar a consulta e salvar o registro.
+        // //   createPeople(criadoresSerie[criador].id, idPessoasCadastras)
+        // // }
+        // // console.log(criadoresSerie[0]);
 
         //Chamar o cadastro das 
       }
@@ -239,6 +261,3 @@ export class GetSeriesTmdb {
 //Irá retornar varias páginas, iterar sobre cada serie pegando o ID da mesma
 
 //Chamar a função de cadastrar serie
-
-
-

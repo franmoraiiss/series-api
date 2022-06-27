@@ -20,12 +20,13 @@ model Series {
   pais_origem     String?  @db.VarChar(45)
   em_producao     Boolean
 
-  Generos_Series Generos_Series[]
-  Temporadas     Temporadas[]
-  Episodio       Episodio[]
-  Elenco         Elenco[]
-  Trailer        Trailer[]
-  Criador_Serie  Criador_Serie[]
+  Generos_Series    Generos_Series[]
+  Temporadas        Temporadas[]
+  Episodio          Episodio[]
+  Elenco            Elenco[]
+  Trailer           Trailer[]
+  Criador_Serie     Criador_Serie[]
+  Plataforma_Series Plataforma_Series[]
   @@map("series")
 }
 
@@ -54,8 +55,10 @@ model Generos {
 }
 
 model Plataforma {
-  idPlataforma Int     @id
-  nome         String? @db.VarChar(45)
+  idPlataforma      Int                 @id
+  nome              String?             @db.VarChar(45)
+  Plataforma_Series Plataforma_Series[]
+
 
   @@map("plataforma")
 }
@@ -68,6 +71,16 @@ model Generos_Series {
 
   @@id([series_idSeries, generos_idGeneros])
   @@map("generos_series")
+}
+
+model Plataforma_Series {
+  series_idSeries         Int
+  series                  Series     @relation(fields: [series_idSeries], references: [idSeries])
+  plataforma_idPlataforma Int
+  plataforma              Plataforma @relation(fields: [plataforma_idPlataforma], references: [idPlataforma])
+
+  @@id([series_idSeries, plataforma_idPlataforma])
+  @@map("plataforma_series")
 }
 
 model Temporadas {
@@ -86,8 +99,9 @@ model Temporadas {
 
 model Episodio {
   idEpisodio              Int        @id
+  numeroEpisodio          Int
   descricao               String     @db.Text
-  nome                    String     @db.VarChar(45)
+  nome                    String     @db.VarChar(100)
   nota                    Float
   data_estreia            DateTime
   temporadas_idTemporadas Int
