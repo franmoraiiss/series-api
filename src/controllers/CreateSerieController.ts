@@ -6,12 +6,13 @@ export class CreateSerieController {
   async handle(request: Request, response: Response) {
     const { id, nome, notas, descricao, imagem, data_lancamento, pais_origem, em_producao } = request.body;
 
+    const date = new Date(data_lancamento)
     const serie = await prismaClient.series.create({
       data: {
         idSeries: id,
         nome: nome,
         descricao: descricao,
-        data_lancamento: data_lancamento,
+        data_lancamento: date,
         nota: notas,
         imagem: imagem,
         pais_origem: pais_origem,

@@ -11,6 +11,10 @@ import { CreateCriadorController } from "./controllers/CreateCriadorController";
 import { CreateEpisodioController } from "./controllers/CreateEpisodioController";
 import { CreateGenerosSeriesControler } from "./controllers/CreateGenerosSeriesControler";
 
+import { GetSeriesTmdb } from "./bussinees/requestTMDB";
+
+
+
 const router = Router();
 
 const createSerie = new CreateSerieController();
@@ -24,6 +28,7 @@ const createCriador = new CreateCriadorController();
 const createEpisodio = new CreateEpisodioController();
 const createGeneroSerie = new CreateGenerosSeriesControler();
 
+const getSeriesTmdb = new GetSeriesTmdb();
 
 router.post("/series", createSerie.handle);
 router.post("/temporada", createTemporada.handle);
@@ -36,4 +41,5 @@ router.post("/criador", createCriador.handle);
 router.post("/episodio", createEpisodio.handle);
 router.post("/generoserie", createGeneroSerie.handle);
 
+router.get("/seriestmdb", getSeriesTmdb.handle);
 export { router };
