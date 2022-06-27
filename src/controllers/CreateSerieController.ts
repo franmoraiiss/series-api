@@ -17,7 +17,6 @@ export class CreateSerieController {
         imagem: imagem,
         pais_origem: pais_origem,
         em_producao: em_producao,
-        criador: "default" //Deixei default pq criador vai ser na vdd uma tabela nova. então aqui nao vem nada, remover esse campo
       },
     });
 
