@@ -213,8 +213,8 @@ async function getSerieById(idSerie: number) {
   // Receber o array de criadores, pegando os id e chamando as funções para adicionar pessoa e criar relação de criador
   for (const criador in response.data.created_by) {
     const idCriador = response.data.created_by[criador].id
-    createPeople(idCriador, idPessoasCadastras); // console.log(idCriador, idPessoasCadastras);
-    createRelationCriador(idCriador, response.data.id)
+    await createPeople(idCriador, idPessoasCadastras); // console.log(idCriador, idPessoasCadastras);
+    await createRelationCriador(idCriador, response.data.id)
   }
 
   //Adicionar TemporadasSerie
@@ -316,26 +316,10 @@ export class GetSeriesTmdb {
           await getSerieById(arraySeries[series].id);
           await getTrailers(arraySeries[series].id);
         }
-        // }
 
-
-        // const criadoresSerie = response.data.created_by;
-
-        // // for (const criador in criadoresSerie) {
-        // //   //Pegar os id dos criadores, ver se ja tem cadastrado, se não tiver realizar a consulta e salvar o registro.
-        // //   createPeople(criadoresSerie[criador].id, idPessoasCadastras)
-        // // }
-        // // console.log(criadoresSerie[0]);
-
-        //Chamar o cadastro das 
       }
     } catch (error) {
       // console.log(error);
     }
   }
 };
-
-//Primeiro acessar a api e buscar as series mais populares.
-//Irá retornar varias páginas, iterar sobre cada serie pegando o ID da mesma
-
-//Chamar a função de cadastrar serie
