@@ -11,27 +11,27 @@ datasource db {
 }
 
 model Series {
-  idSeries        Int      @id
-  nome            String   @db.VarChar(50)
+  id_series       Int       @id
+  nome            String    @db.VarChar(50)
   nota            Float
-  descricao       String   @db.Text
-  imagem          String?  @db.VarChar(45)
-  data_lancamento DateTime
-  pais_origem     String?  @db.VarChar(45)
+  descricao       String    @db.Text
+  imagem          String?   @db.VarChar(45)
+  data_lancamento DateTime?
+  pais_origem     String?   @db.VarChar(45)
   em_producao     Boolean
 
-  Generos_Series    Generos_Series[]
-  Temporadas        Temporadas[]
-  Episodio          Episodio[]
-  Elenco            Elenco[]
-  Trailer           Trailer[]
-  Criador_Serie     Criador_Serie[]
-  Plataforma_Series Plataforma_Series[]
+  generos_series    Generos_series[]
+  temporadas        Temporadas[]
+  episodio          Episodio[]
+  elenco            Elenco[]
+  trailer           Trailer[]
+  criador_serie     Criador_serie[]
+  plataforma_series Plataforma_series[]
   @@map("series")
 }
 
 model Pessoa {
-  idPessoa         Int       @id
+  id_pessoa        Int       @id
   nome             String    @db.VarChar(45)
   foto             String?   @db.VarChar(45)
   biografia        String?   @db.Text
@@ -41,111 +41,111 @@ model Pessoa {
   lugar_nascimento String?   @db.VarChar(45)
   popularidade     Float?
 
-  Elenco        Elenco[]
-  Criador_Serie Criador_Serie[]
+  elenco        Elenco[]
+  criador_serie Criador_serie[]
   @@map("pessoas")
 }
 
 model Generos {
-  idGeneros Int    @id
-  nome      String @db.VarChar(45)
+  id_generos Int    @id
+  nome       String @db.VarChar(45)
 
-  Generos_Series Generos_Series[]
+  generos_series Generos_series[]
   @@map("generos")
 }
 
 model Plataforma {
-  idPlataforma      Int                 @id
+  id_plataforma     Int                 @id
   nome              String?             @db.VarChar(45)
-  Plataforma_Series Plataforma_Series[]
+  plataforma_series Plataforma_series[]
 
 
   @@map("plataforma")
 }
 
-model Generos_Series {
-  series_idSeries   Int
-  series            Series  @relation(fields: [series_idSeries], references: [idSeries])
-  generos_idGeneros Int
-  generos           Generos @relation(fields: [generos_idGeneros], references: [idGeneros])
+model Generos_series {
+  series_id_series   Int
+  series             Series  @relation(fields: [series_id_series], references: [id_series])
+  generos_id_generos Int
+  generos            Generos @relation(fields: [generos_id_generos], references: [id_generos])
 
-  @@id([series_idSeries, generos_idGeneros])
+  @@id([series_id_series, generos_id_generos])
   @@map("generos_series")
 }
 
-model Plataforma_Series {
-  series_idSeries         Int
-  series                  Series     @relation(fields: [series_idSeries], references: [idSeries])
-  plataforma_idPlataforma Int
-  plataforma              Plataforma @relation(fields: [plataforma_idPlataforma], references: [idPlataforma])
+model Plataforma_series {
+  series_id_series         Int
+  series                   Series     @relation(fields: [series_id_series], references: [id_series])
+  plataforma_id_plataforma Int
+  plataforma               Plataforma @relation(fields: [plataforma_id_plataforma], references: [id_plataforma])
 
-  @@id([series_idSeries, plataforma_idPlataforma])
+  @@id([series_id_series, plataforma_id_plataforma])
   @@map("plataforma_series")
 }
 
 model Temporadas {
-  idTemporadas       Int     @id
+  id_temporadas      Int     @id
   nome               String  @db.VarChar(45)
   descricao          String  @db.Text
   link_foto          String? @db.VarChar(45)
   quantidade_ep      Int     @db.SmallInt
   numero_temporarada Int
-  series_idSeries    Int
-  series             Series  @relation(fields: [series_idSeries], references: [idSeries])
+  series_id_series   Int
+  series             Series  @relation(fields: [series_id_series], references: [id_series])
 
-  Episodio Episodio[]
+  episodio Episodio[]
   @@map("temporadas")
 }
 
 model Episodio {
-  idEpisodio              Int        @id
-  numeroEpisodio          Int
-  descricao               String     @db.Text
-  nome                    String     @db.VarChar(100)
-  nota                    Float
-  data_estreia            DateTime
-  temporadas_idTemporadas Int
-  temporadas              Temporadas @relation(fields: [temporadas_idTemporadas], references: [idTemporadas])
-  temporadas_idSeries     Int
-  series                  Series     @relation(fields: [temporadas_idSeries], references: [idSeries])
+  id_episodio              Int        @id
+  numero_episodio          Int
+  descricao                String     @db.Text
+  nome                     String     @db.VarChar(100)
+  nota                     Float
+  data_estreia             DateTime?
+  temporadas_id_temporadas Int
+  temporadas               Temporadas @relation(fields: [temporadas_id_temporadas], references: [id_temporadas])
+  temporadas_id_series     Int
+  series                   Series     @relation(fields: [temporadas_id_series], references: [id_series])
 
   @@map("episodio")
 }
 
 model Elenco {
-  pessoa_idPessoa Int
-  pessoa          Pessoa @relation(fields: [pessoa_idPessoa], references: [idPessoa])
+  pessoa_id_pessoa Int
+  pessoa           Pessoa @relation(fields: [pessoa_id_pessoa], references: [id_pessoa])
 
   personagem String? @db.VarChar(45)
 
-  serie_idSerie Int
-  series        Series @relation(fields: [serie_idSerie], references: [idSeries])
+  serie_id_serie Int
+  series         Series @relation(fields: [serie_id_serie], references: [id_series])
 
-  @@id([pessoa_idPessoa, serie_idSerie])
+  @@id([pessoa_id_pessoa, serie_id_serie])
   @@map("elenco")
 }
 
 model Trailer {
-  idTrailer       String  @id @db.VarChar(45)
-  nome            String? @db.VarChar(45)
-  key_trailer     String? @db.VarChar(45)
-  tipo            String? @db.VarChar(45)
-  series_idSeries Int
-  series          Series  @relation(fields: [series_idSeries], references: [idSeries])
+  id_trailer       String  @id @db.VarChar(45)
+  nome             String? @db.VarChar(45)
+  key_trailer      String? @db.VarChar(45)
+  tipo             String? @db.VarChar(45)
+  series_id_series Int
+  series           Series  @relation(fields: [series_id_series], references: [id_series])
 
   website_plataform String? @db.VarChar(45)
 
   @@map("trailer")
 }
 
-model Criador_Serie {
-  pessoa_idAtores Int
-  pessoa          Pessoa @relation(fields: [pessoa_idAtores], references: [idPessoa])
+model Criador_serie {
+  pessoa_id_atores Int
+  pessoa           Pessoa @relation(fields: [pessoa_id_atores], references: [id_pessoa])
 
-  serie_idSeries Int
-  series         Series @relation(fields: [serie_idSeries], references: [idSeries])
+  serie_id_series Int
+  series          Series @relation(fields: [serie_id_series], references: [id_series])
 
 
-  @@id([pessoa_idAtores, serie_idSeries])
+  @@id([pessoa_id_atores, serie_id_series])
   @@map("criador_serie")
 }

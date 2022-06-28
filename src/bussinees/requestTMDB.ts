@@ -8,11 +8,11 @@ import { prismaClient } from "../database/prismaClient";
 async function createRelationCriador(idPerson: number, idSerie: number) {
 
   //Busca os cadastros no banco pra nao repetir
-  const verCriador = await prismaClient.criador_Serie.findUnique({
+  const verCriador = await prismaClient.criador_serie.findUnique({
     where: {
-      pessoa_idAtores_serie_idSeries: {
-        pessoa_idAtores: idPerson,
-        serie_idSeries: idSerie,
+      pessoa_id_atores_serie_id_series: {
+        pessoa_id_atores: idPerson,
+        serie_id_series: idSerie,
       },
     },
   })
@@ -22,10 +22,10 @@ async function createRelationCriador(idPerson: number, idSerie: number) {
   }
   else {
     try {
-      await prismaClient.criador_Serie.create({
+      await prismaClient.criador_serie.create({
         data: {
-          pessoa_idAtores: idPerson,
-          serie_idSeries: idSerie,
+          pessoa_id_atores: idPerson,
+          serie_id_series: idSerie,
         },
       });
       // console.log("Sucesso relação criador");
@@ -40,7 +40,7 @@ async function createRelationCriador(idPerson: number, idSerie: number) {
 async function createPeople(id: number) {
   const ver = await prismaClient.pessoa.findFirst({
     where: {
-      idPessoa: id,
+      id_pessoa: id,
     }
 
   });
@@ -59,7 +59,7 @@ async function createPeople(id: number) {
 
       await prismaClient.pessoa.create({
         data: {
-          idPessoa: person.data.id,
+          id_pessoa: person.data.id,
           nome: person.data.name,
           foto: person.data.profile_path,
           biografia: person.data.biography,
@@ -85,9 +85,9 @@ async function createPeople(id: number) {
 async function createElenco(idPessoa: number, idSerie: number, character: string) {
   const ver = await prismaClient.elenco.findUnique({
     where: {
-      pessoa_idPessoa_serie_idSerie: {
-        pessoa_idPessoa: idPessoa,
-        serie_idSerie: idSerie,
+      pessoa_id_pessoa_serie_id_serie: {
+        pessoa_id_pessoa: idPessoa,
+        serie_id_serie: idSerie,
       }
     }
   })
@@ -100,8 +100,8 @@ async function createElenco(idPessoa: number, idSerie: number, character: string
       //Se nao tem cadastrado o elenco, agora cadastra
       await prismaClient.elenco.create({
         data: {
-          pessoa_idPessoa: idPessoa,
-          serie_idSerie: idSerie,
+          pessoa_id_pessoa: idPessoa,
+          serie_id_serie: idSerie,
           personagem: character,
         },
       });
@@ -122,7 +122,7 @@ async function createEpisode(episodeNumber: number, idSerie: number, season_numb
 
     const ver = await prismaClient.episodio.findFirst({
       where: {
-        idEpisodio: episode.data.id,
+        id_episodio: episode.data.id,
       }
     });
     if (ver != null) {
@@ -139,14 +139,14 @@ async function createEpisode(episodeNumber: number, idSerie: number, season_numb
 
       const newEp = await prismaClient.episodio.create({
         data: {
-          idEpisodio: episode.data.id,
-          numeroEpisodio: episode.data.episode_number,
+          id_episodio: episode.data.id,
+          numero_episodio: episode.data.episode_number,
           nome: episode.data.name,
           descricao: episode.data.overview,
           data_estreia: dataAr,
           nota: episode.data.vote_average,
-          temporadas_idSeries: idSerie,
-          temporadas_idTemporadas: idSeason,
+          temporadas_id_series: idSerie,
+          temporadas_id_temporadas: idSeason,
         },
       });
 
@@ -165,7 +165,7 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
 
     const verSeason = await prismaClient.temporadas.findFirst({
       where: {
-        idTemporadas: seasons.data.id,
+        id_temporadas: seasons.data.id,
       }
     })
 
@@ -175,13 +175,13 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
       // Cria a temporada
       await prismaClient.temporadas.create({
         data: {
-          idTemporadas: seasons.data.id,
+          id_temporadas: seasons.data.id,
           nome: seasons.data.name,
           descricao: seasons.data.overview,
           link_foto: seasons.data.poster_path,
           quantidade_ep: totalEp,
           numero_temporarada: season_number,
-          series_idSeries: idSerie
+          series_id_series: idSerie
         },
       });
 
@@ -215,7 +215,7 @@ async function createPlataforma(idPlataforma: number, nomePlataforma: string) {
   try {
     const ver = await prismaClient.plataforma.findFirst({
       where: {
-        idPlataforma: idPlataforma,
+        id_plataforma: idPlataforma,
       }
     })
     if (ver != null) {
@@ -224,7 +224,7 @@ async function createPlataforma(idPlataforma: number, nomePlataforma: string) {
     else {
       await prismaClient.plataforma.create({
         data: {
-          idPlataforma: idPlataforma,
+          id_plataforma: idPlataforma,
           nome: nomePlataforma,
         },
       });
@@ -240,10 +240,10 @@ async function createPlataforma(idPlataforma: number, nomePlataforma: string) {
 //Criar Relação de plataforma e series tabela n existe
 async function createRelationPlataformaSerie(idPlataforma: number, idSeason: number) {
   try {
-    await prismaClient.plataforma_Series.create({
+    await prismaClient.plataforma_series.create({
       data: {
-        series_idSeries: idSeason,
-        plataforma_idPlataforma: idPlataforma,
+        series_id_series: idSeason,
+        plataforma_id_plataforma: idPlataforma,
       },
     });
   } catch (error) {
@@ -255,10 +255,10 @@ async function createRelationPlataformaSerie(idPlataforma: number, idSeason: num
 async function createRelationGenreSerie(idGenre: number, idSerie: number) {
 
   try {
-    await prismaClient.generos_Series.create({
+    await prismaClient.generos_series.create({
       data: {
-        generos_idGeneros: idGenre,
-        series_idSeries: idSerie,
+        generos_id_generos: idGenre,
+        series_id_series: idSerie,
       },
     });
 
@@ -273,7 +273,7 @@ async function getSerieById(idSerie: number) {
   //Buscando a serie para ver se ja foi cadastrada
   const verSerie = await prismaClient.series.findFirst({
     where: {
-      idSeries: idSerie,
+      id_series: idSerie,
     }
   })
   //Se existir printa msg
@@ -290,7 +290,7 @@ async function getSerieById(idSerie: number) {
       const response = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}?api_key=${api_key}`);
       await prismaClient.series.create({
         data: {
-          idSeries: idSerie,
+          id_series: idSerie,
           nome: response.data.name,
           nota: response.data.vote_average,
           descricao: response.data.overview,
@@ -349,7 +349,7 @@ async function getGeneros() {
       // console.log(String(generos.data.genres));
       await prismaClient.generos.create({
         data: {
-          idGeneros: generos.data.genres[genero].id,
+          id_generos: generos.data.genres[genero].id,
           nome: generos.data.genres[genero].name,
         }
       });
@@ -376,7 +376,7 @@ async function getTrailers(idSerie: number) {
 
       const ver = await prismaClient.trailer.findFirst({
         where: {
-          idTrailer: videosRecebidos[video].id,
+          id_trailer: videosRecebidos[video].id,
         }
       });
       if (ver != null) {
@@ -386,11 +386,11 @@ async function getTrailers(idSerie: number) {
         if (videosRecebidos[video].type == "Trailer") {
           await prismaClient.trailer.create({
             data: {
-              idTrailer: videosRecebidos[video].id,
+              id_trailer: videosRecebidos[video].id,
               nome: videosRecebidos[video].nome,
               key_trailer: videosRecebidos[video].key,
               tipo: videosRecebidos[video].type,
-              series_idSeries: idSerie,
+              series_id_series: idSerie,
               website_plataform: videosRecebidos[video].site,
             },
           });
