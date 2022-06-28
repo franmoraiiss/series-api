@@ -52,6 +52,8 @@ async function createPeople(id: number) {
     //Cria no banco a pessoa.
     try {
       // const idPessoa = id; //salva id
+      setTimeout(() => {
+      }, 1200)
       const person = await axios.get(`https://api.themoviedb.org/3/person/${id}?api_key=${api_key}`) //busca pessoa
 
 
@@ -74,7 +76,7 @@ async function createPeople(id: number) {
 
     }
     catch (error) {
-      console.log("Falha ao criar pessoa");
+      console.log(error);
     }
   }
 };
@@ -114,6 +116,8 @@ async function createElenco(idPessoa: number, idSerie: number, character: string
 
 async function createEpisode(episodeNumber: number, idSerie: number, season_number: number, idSeason: number) {
   try {
+    setTimeout(() => {
+    }, 1200)
     const episode = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/season/${season_number}/episode/${episodeNumber}?api_key=${api_key}`)
 
     const ver = await prismaClient.episodio.findFirst({
@@ -155,6 +159,8 @@ async function createEpisode(episodeNumber: number, idSerie: number, season_numb
 
 async function createSeason(season_number: number, idSerie: number, totalEp: number) {
   try {
+    setTimeout(() => {
+    }, 1200)
     const seasons = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/season/${season_number}?api_key=${api_key}`)
 
     const verSeason = await prismaClient.temporadas.findFirst({
@@ -189,6 +195,7 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
         if (stars && stars.length > 0) {
           //Para cada ator que estrelou a temporada da serie, adiciona ele ao cadastro pessoa e dps associa a elenco
           for (const star in stars) {
+
             await createPeople(stars[star].id);
           }
 
@@ -278,6 +285,8 @@ async function getSerieById(idSerie: number) {
   else {
     //Criar a serie passando os dados dela
     try {
+      setTimeout(() => {
+      }, 1200)
       const response = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}?api_key=${api_key}`);
       await prismaClient.series.create({
         data: {
@@ -331,6 +340,8 @@ async function getSerieById(idSerie: number) {
 async function getGeneros() {
   try {
     //Busca todos os generos
+    setTimeout(() => {
+    }, 1200)
     const generos = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${api_key}`)
 
     //Para cada genero cadastra com seu id e nome
@@ -355,6 +366,8 @@ async function getGeneros() {
 
 async function getTrailers(idSerie: number) {
   try {
+    setTimeout(() => {
+    }, 1200)
     const videos = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/videos?api_key=${api_key}`)
 
     const videosRecebidos = videos.data.results
@@ -413,6 +426,8 @@ export class GetSeriesTmdb {
         console.log()
         console.log("------ Carregando a página", page, " de ", maxPage, " ------------");
         //Buscar as series mais populares
+        setTimeout(() => {
+        }, 1200)
         const response = await axios.get(`https://api.themoviedb.org/3/tv/popular?api_key=${api_key}&page=${page}`)
 
         const arraySeries = response.data.results;
