@@ -126,7 +126,7 @@ model Elenco {
 }
 
 model Trailer {
-  idTrailer       Int     @id
+  idTrailer       String  @id @db.VarChar(45)
   nome            String? @db.VarChar(45)
   key_trailer     String? @db.VarChar(45)
   tipo            String? @db.VarChar(45)

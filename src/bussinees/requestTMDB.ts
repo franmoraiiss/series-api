@@ -29,7 +29,6 @@ async function createPeople(id: number, idPessoasCadastras: number[]) {
     //Criar a relação de pessoa e serie como criador dela.
   }
   else { //Nao tem cadastro
-
     //Cria no banco a pessoa.
     try {
       // const idPessoa = id; //salva id
@@ -121,16 +120,14 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
 
     //Cadastrando estrelas da serie. Busca cada id e manda criar
     for (const episode in seasons.data.episodes) {
-      // createEpisode(seasons.data.episodes[episode].episode_number, idSerie, season_number, seasons.data.id);
+      createEpisode(seasons.data.episodes[episode].episode_number, idSerie, season_number, seasons.data.id);
 
-      // const stars = seasons.data.episodes[episode].guest_stars;
-      // for (const star in stars) {
-      //   const idStar = stars[star].id
-      //   await createPeople(idStar, idPessoasCadastras);
-      //   createElenco(idStar, idSerie, stars[star].character)
-      //   // console.log(idStar, idSerie, stars[star].character);
-      //   // console.log(stars[star].id);
-      // }
+      const stars = seasons.data.episodes[episode].guest_stars;
+      for (const star in stars) {
+        const idStar = stars[star].id
+        await createPeople(idStar, idPessoasCadastras);
+        createElenco(idStar, idSerie, stars[star].character)
+      }
 
     }
 
@@ -152,7 +149,7 @@ async function createPlataforma(idPlataforma: number, nomePlataforma: string) {
     });
   }
   catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 
 }
@@ -172,15 +169,32 @@ async function createRelationPlataformaSerie(idPlataforma: number, idSeason: num
   }
 }
 
+//Função para associar genero e serie
+async function createRelationGenreSerie(idGenre: number, idSerie: number) {
+
+  try {
+    await prismaClient.generos_Series.create({
+      data: {
+        generos_idGeneros: idGenre,
+        series_idSeries: idSerie,
+      },
+    });
+
+  }
+  catch (error) {
+    // console.log(error)
+  }
+}
+
 //Buscar a serie pelo ID. 
-async function getSerieById(idSeason: number) {
-  const response = await axios.get(`https://api.themoviedb.org/3/tv/${idSeason}?api_key=${api_key}`);
+async function getSerieById(idSerie: number) {
+  const response = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}?api_key=${api_key}`);
 
   //Criar a serie passando os dados dela
   try {
     await prismaClient.series.create({
       data: {
-        idSeries: idSeason,
+        idSeries: idSerie,
         nome: response.data.name,
         nota: response.data.vote_average,
         descricao: response.data.overview,
@@ -196,32 +210,95 @@ async function getSerieById(idSeason: number) {
     // console.log("erro ao pegar serie");
   }
 
-  //Receber o array de criadores, pegando os id e verificando se ja tem cadastro.
-  // for (const criador in response.data.created_by) {
-  //   const idCriador = response.data.created_by[criador].id
-  //   createPeople(idCriador, idPessoasCadastras); // console.log(idCriador, idPessoasCadastras);
-  //   createRelationCriador(idCriador, response.data.id)
-  // }
+  // Receber o array de criadores, pegando os id e chamando as funções para adicionar pessoa e criar relação de criador
+  for (const criador in response.data.created_by) {
+    const idCriador = response.data.created_by[criador].id
+    createPeople(idCriador, idPessoasCadastras); // console.log(idCriador, idPessoasCadastras);
+    createRelationCriador(idCriador, response.data.id)
+  }
 
-  // //Adicionar TemporadasSerie
-  // for (const season in response.data.seasons) {
-  //   const idSeason = response.data.seasons[season].id
-  //   createSeason(response.data.seasons[season].season_number, response.data.id, response.data.seasons[season].episode_count)
-  // }
+  //Adicionar TemporadasSerie
+  for (const season in response.data.seasons) {
+    const idSeason = response.data.seasons[season].id
+    createSeason(response.data.seasons[season].season_number, response.data.id, response.data.seasons[season].episode_count)
+  }
+
+  for (const genre in response.data.genres) {
+    const idGenre = response.data.genres[genre].id
+    createRelationGenreSerie(idGenre, idSerie)
+  }
 
   // console.log("Criado com sucesso")
   // console.log(response.data.networks)
   for (const network in response.data.networks) {
     await createPlataforma(response.data.networks[network].id, response.data.networks[network].name);
-    createRelationPlataformaSerie(response.data.networks[network].id, idSeason);
+    createRelationPlataformaSerie(response.data.networks[network].id, idSerie);
 
   }
 }
+
+//Buscar Generos de series 
+async function getGeneros() {
+  try {
+    //Busca todos os generos
+    const generos = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${api_key}`)
+
+    const geneross = generos.data.genres;
+
+
+    //Para cada genero cadastra com seu id e nome
+    for (const genero in generos.data.genres) {
+
+      // console.log(String(generos.data.genres));
+      await prismaClient.generos.create({
+        data: {
+          idGeneros: generos.data.genres[genero].id,
+          nome: generos.data.genres[genero].name,
+        }
+      });
+    }
+
+  }
+  catch (error) {
+    console.log(error)
+  }
+}
+
+
+async function getTrailers(idSerie: number) {
+  try {
+    const videos = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/videos?api_key=${api_key}`)
+
+    const videosRecebidos = videos.data.results
+    for (const video in videosRecebidos) {
+      if (videosRecebidos[video].type == "Trailer") {
+        await prismaClient.trailer.create({
+          data: {
+            idTrailer: videosRecebidos[video].id,
+            nome: videosRecebidos[video].nome,
+            key_trailer: videosRecebidos[video].key,
+            tipo: videosRecebidos[video].type,
+            series_idSeries: idSerie,
+            website_plataform: videosRecebidos[video].site,
+          },
+        });
+      }
+    }
+
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
 
 //Classe que vai chamar as series populares e depois chamar as funçoes para cadastrar todos os dados.
 export class GetSeriesTmdb {
   async handle(request: Request, response: Response) {
     const { } = request.body;
+
+    //Carrega todos os generos na tabela de generos
+    getGeneros();
 
     try {
       //Definir quantas paginas de series buscaremos
@@ -234,9 +311,10 @@ export class GetSeriesTmdb {
         // console.log(response.data.results)
         const arraySeries = response.data.results;
 
-        //Agora vai ver cada serie do retorno e chamar a função para cadastrar.
+        //Agora vai ver cada serie do retorno e chamar a função para cadastrar a serie e trailers.
         for (const series in arraySeries) {
-          getSerieById(arraySeries[series].id);
+          await getSerieById(arraySeries[series].id);
+          await getTrailers(arraySeries[series].id);
         }
         // }
 
