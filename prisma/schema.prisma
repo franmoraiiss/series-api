@@ -14,31 +14,31 @@ model Series {
   idSeries        Int      @id
   nome            String   @db.VarChar(50)
   nota            Float
-  descricao       String   @db.VarChar(45)
+  descricao       String   @db.Text
   imagem          String?  @db.VarChar(45)
   data_lancamento DateTime
-  criador         String   @db.VarChar(45)
   pais_origem     String?  @db.VarChar(45)
   em_producao     Boolean
 
-  Generos_Series Generos_Series[]
-  Temporadas     Temporadas[]
-  Episodio       Episodio[]
-  Elenco         Elenco[]
-  Trailer        Trailer[]
-  Criador_Serie  Criador_Serie[]
+  Generos_Series    Generos_Series[]
+  Temporadas        Temporadas[]
+  Episodio          Episodio[]
+  Elenco            Elenco[]
+  Trailer           Trailer[]
+  Criador_Serie     Criador_Serie[]
+  Plataforma_Series Plataforma_Series[]
   @@map("series")
 }
 
 model Pessoa {
   idPessoa         Int       @id
   nome             String    @db.VarChar(45)
-  foto             String    @db.VarChar(45)
-  biografia        String?   @db.VarChar(45)
+  foto             String?   @db.VarChar(45)
+  biografia        String?   @db.Text
   genero           Int       @db.SmallInt
-  data_nascimento  DateTime
+  data_nascimento  DateTime?
   data_morte       DateTime?
-  lugar_nascimento String    @db.VarChar(45)
+  lugar_nascimento String?   @db.VarChar(45)
   popularidade     Float?
 
   Elenco        Elenco[]
@@ -55,8 +55,10 @@ model Generos {
 }
 
 model Plataforma {
-  idPlataforma Int     @id
-  nome         String? @db.VarChar(45)
+  idPlataforma      Int                 @id
+  nome              String?             @db.VarChar(45)
+  Plataforma_Series Plataforma_Series[]
+
 
   @@map("plataforma")
 }
@@ -71,10 +73,20 @@ model Generos_Series {
   @@map("generos_series")
 }
 
+model Plataforma_Series {
+  series_idSeries         Int
+  series                  Series     @relation(fields: [series_idSeries], references: [idSeries])
+  plataforma_idPlataforma Int
+  plataforma              Plataforma @relation(fields: [plataforma_idPlataforma], references: [idPlataforma])
+
+  @@id([series_idSeries, plataforma_idPlataforma])
+  @@map("plataforma_series")
+}
+
 model Temporadas {
   idTemporadas       Int     @id
   nome               String  @db.VarChar(45)
-  descricao          String  @db.VarChar(45)
+  descricao          String  @db.Text
   link_foto          String? @db.VarChar(45)
   quantidade_ep      Int     @db.SmallInt
   numero_temporarada Int
@@ -87,10 +99,11 @@ model Temporadas {
 
 model Episodio {
   idEpisodio              Int        @id
-  descricao               String     @db.VarChar(45)
-  nome                    String     @db.VarChar(45)
+  numeroEpisodio          Int
+  descricao               String     @db.Text
+  nome                    String     @db.VarChar(100)
   nota                    Float
-  data_estreia            String     @db.VarChar(45)
+  data_estreia            DateTime
   temporadas_idTemporadas Int
   temporadas              Temporadas @relation(fields: [temporadas_idTemporadas], references: [idTemporadas])
   temporadas_idSeries     Int
@@ -105,15 +118,15 @@ model Elenco {
 
   personagem String? @db.VarChar(45)
 
-  series_idSeries Int
-  series          Series @relation(fields: [series_idSeries], references: [idSeries])
+  serie_idSerie Int
+  series        Series @relation(fields: [serie_idSerie], references: [idSeries])
 
-  @@id([pessoa_idPessoa, series_idSeries])
+  @@id([pessoa_idPessoa, serie_idSerie])
   @@map("elenco")
 }
 
 model Trailer {
-  idTrailer       Int     @id
+  idTrailer       String  @id @db.VarChar(45)
   nome            String? @db.VarChar(45)
   key_trailer     String? @db.VarChar(45)
   tipo            String? @db.VarChar(45)
