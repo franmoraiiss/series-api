@@ -161,7 +161,7 @@ async function createPlataforma(idPlataforma: number, nomePlataforma: string) {
 async function createRelationPlataformaSerie(idPlataforma: number, idSeason: number) {
   try {
 
-    await prismaClient.plataforma_Series.create({
+    await prismaClient.plataforma_series.create({
       data: {
         series_idSeries: idSeason,
         plataforma_idPlataforma: idPlataforma,
