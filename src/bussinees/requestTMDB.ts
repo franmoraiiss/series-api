@@ -193,10 +193,10 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
       });
 
       //Para cada episodio faça o seguinte
+      console.log("------ Cadastrando os Episodios da tempora , ", season_number, " ------------");
       for (const episode in seasons.data.episodes) {
         //Cria o episodio
         await new Promise(r => setTimeout(r, 1000));
-        console.log("------ Cadastrando os Episodios da serie ------------");
         createEpisode(seasons.data.episodes[episode].episode_number, idSerie, season_number, seasons.data.id);
 
         const stars = seasons.data.episodes[episode].guest_stars;
@@ -211,6 +211,7 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
 
           for (const star in stars) {
             // sleep
+            await new Promise(r => setTimeout(r, 1000));
             await createElenco(stars[star].id, idSerie, stars[star].character)
           }
         }
