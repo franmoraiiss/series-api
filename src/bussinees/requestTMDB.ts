@@ -53,7 +53,8 @@ async function createPeople(id: number) {
     try {
       // const idPessoa = id; //salva id
       setTimeout(() => {
-      }, 1200)
+        // console.log("Vai esperar 2 segundo sim")
+      }, 2000)
       const person = await axios.get(`https://api.themoviedb.org/3/person/${id}?api_key=${api_key}`) //busca pessoa
 
 
@@ -76,7 +77,9 @@ async function createPeople(id: number) {
 
     }
     catch (error) {
-      console.log(error);
+      // console.log(error);
+      console.log("Erro ao criar pessoa");
+
     }
   }
 };
@@ -91,33 +94,40 @@ async function createElenco(idPessoa: number, idSerie: number, character: string
       }
     }
   })
+
   if (ver != null) {
     // console.log("Ator já cadastro no Elenco -->", idPessoa)
     //Aqui nao printa nada pq senao irá poluir mt, alias cada episodio tem seu elenco e são todos associados a serie.
   }
   else {
-    try {
-      //Se nao tem cadastrado o elenco, agora cadastra
-      await prismaClient.elenco.create({
-        data: {
-          pessoa_id_pessoa: idPessoa,
-          serie_id_serie: idSerie,
-          personagem: character,
-        },
-      });
-      // console.log(idPessoa, " --> adicionada ao elenco da serie: ", idSerie);
+    const verPessoa = await prismaClient.pessoa.findFirst({
+      where: {
+        id_pessoa: idPessoa,
+      }
+    })
+    if (verPessoa != null) {
 
-    }
-    catch (error) {
-      console.log("Erro ao associar pessoa ao  Elenco", idPessoa);
+      try {
+        //Se nao tem cadastrado o elenco, agora cadastra
+        await prismaClient.elenco.create({
+          data: {
+            pessoa_id_pessoa: idPessoa,
+            serie_id_serie: idSerie,
+            personagem: character,
+          },
+        });
+        // console.log(idPessoa, " --> adicionada ao elenco da serie: ", idSerie);   
+      }
+      catch (error) {
+        console.log("Erro ao associar pessoa ao  Elenco", idPessoa);
+      }
     }
   }
 }
 
 async function createEpisode(episodeNumber: number, idSerie: number, season_number: number, idSeason: number) {
   try {
-    setTimeout(() => {
-    }, 1200)
+
     const episode = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/season/${season_number}/episode/${episodeNumber}?api_key=${api_key}`)
 
     const ver = await prismaClient.episodio.findFirst({
@@ -153,14 +163,15 @@ async function createEpisode(episodeNumber: number, idSerie: number, season_numb
     }
   }
   catch (error) {
-    console.log(error)
+    // console.log(error)
+    console.log("Erro ao criar episodio")
   }
 }
 
 async function createSeason(season_number: number, idSerie: number, totalEp: number) {
   try {
     setTimeout(() => {
-    }, 1200)
+    }, 2000)
     const seasons = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/season/${season_number}?api_key=${api_key}`)
 
     const verSeason = await prismaClient.temporadas.findFirst({
@@ -254,19 +265,44 @@ async function createRelationPlataformaSerie(idPlataforma: number, idSeason: num
 }
 
 //Função para associar genero e serie
-async function createRelationGenreSerie(idGenre: number, idSerie: number) {
+async function createRelationGenreSerie(idGenre: number, idSerie: number, nameGenre: string) {
 
-  try {
-    await prismaClient.generos_series.create({
-      data: {
-        generos_id_generos: idGenre,
-        series_id_series: idSerie,
-      },
-    });
+  const verGenero = await prismaClient.generos.findFirst({
+    where: {
+      id_generos: idGenre,
+    }
+  })
 
+
+
+  if (verGenero != null) {
+    try {
+      await prismaClient.generos_series.create({
+        data: {
+          generos_id_generos: idGenre,
+          series_id_series: idSerie,
+        },
+      });
+
+    }
+    catch (error) {
+      // console.log(error)
+      console.log("Erro ao associar genero e serie")
+    }
   }
-  catch (error) {
-    console.log(error)
+  else {
+    try {
+      await prismaClient.generos.create({
+        data: {
+          id_generos: idGenre,
+          nome: nameGenre,
+        }
+      });
+      await createRelationGenreSerie(idGenre, idSerie, nameGenre);
+      console.log("Cadastrado novo genero");
+    } catch (error) {
+
+    }
   }
 }
 
@@ -288,7 +324,7 @@ async function getSerieById(idSerie: number) {
     //Criar a serie passando os dados dela
     try {
       setTimeout(() => {
-      }, 1200)
+      }, 2000)
       const response = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}?api_key=${api_key}`);
       await prismaClient.series.create({
         data: {
@@ -308,6 +344,7 @@ async function getSerieById(idSerie: number) {
       console.log("------ Cadastrando os criadores da serie: ", response.data.name, " ------------");
       for (const criador in response.data.created_by) {
         const idCriador = response.data.created_by[criador].id
+
         await createPeople(idCriador);
         await createRelationCriador(idCriador, response.data.id)
       }
@@ -320,7 +357,7 @@ async function getSerieById(idSerie: number) {
       //Para cada genero da serie, relaciona à serie.
       for (const genre in response.data.genres) {
         const idGenre = response.data.genres[genre].id
-        createRelationGenreSerie(idGenre, idSerie)
+        createRelationGenreSerie(idGenre, idSerie, response.data.genres[genre].name)
       }
 
       // console.log("Criado com sucesso")
@@ -343,7 +380,7 @@ async function getGeneros() {
   try {
     //Busca todos os generos
     setTimeout(() => {
-    }, 1200)
+    }, 2000)
     const generos = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${api_key}`)
 
     //Para cada genero cadastra com seu id e nome
@@ -369,7 +406,7 @@ async function getGeneros() {
 async function getTrailers(idSerie: number) {
   try {
     setTimeout(() => {
-    }, 1200)
+    }, 2000)
     const videos = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/videos?api_key=${api_key}`)
 
     const videosRecebidos = videos.data.results
@@ -417,20 +454,21 @@ export class GetSeriesTmdb {
     console.log("------ Carregando os Generos existentes para o banco ------------");
     //Carrega todos os generos na tabela de generos
     await getGeneros();
+    //Definir quantas paginas de series buscaremos
+    const maxPage = 10; //Total é 67195 sendo 20 series por pagina
+    let page: number = 1;
 
     try {
-      //Definir quantas paginas de series buscaremos
-      const maxPage = 2; //Total é 67195 sendo 20 series por pagina
-      let page: number;
+
       //Loop olhando cada pagina de busca
-      for (page = 2; page <= maxPage; page++) {
+      for (let pageAt = page; pageAt <= maxPage; pageAt++) {
         console.log()
         console.log()
-        console.log("------ Carregando a página", page, " de ", maxPage, " ------------");
+        console.log("------ Carregando a página", pageAt, " de ", maxPage, " ------------");
         //Buscar as series mais populares
         setTimeout(() => {
-        }, 1200)
-        const response = await axios.get(`https://api.themoviedb.org/3/tv/popular?api_key=${api_key}&page=${page}`)
+        }, 2000)
+        const response = await axios.get(`https://api.themoviedb.org/3/tv/popular?api_key=${api_key}&page=${pageAt}`)
 
         const arraySeries = response.data.results;
 
@@ -451,5 +489,9 @@ export class GetSeriesTmdb {
     } catch (error) {
       console.log("Erro na main");
     }
+
+    console.log();
+    console.log();
+    console.log("------------ FINALIZADO PAGINA ", page, " ATÉ A ", maxPage, " -------------");
   }
 };

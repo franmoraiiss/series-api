@@ -12,12 +12,12 @@ datasource db {
 
 model Series {
   id_series       Int       @id
-  nome            String    @db.VarChar(50)
+  nome            String    @db.Text
   nota            Float
   descricao       String    @db.Text
-  imagem          String?   @db.VarChar(45)
+  imagem          String?   @db.Text
   data_lancamento DateTime?
-  pais_origem     String?   @db.VarChar(45)
+  pais_origem     String?   @db.Text
   em_producao     Boolean
 
   generos_series    Generos_series[]
@@ -32,13 +32,13 @@ model Series {
 
 model Pessoa {
   id_pessoa        Int       @id
-  nome             String    @db.VarChar(45)
-  foto             String?   @db.VarChar(45)
+  nome             String    @db.Text
+  foto             String?   @db.Text
   biografia        String?   @db.Text
   genero           Int       @db.SmallInt
   data_nascimento  DateTime?
   data_morte       DateTime?
-  lugar_nascimento String?   @db.VarChar(45)
+  lugar_nascimento String?   @db.Text
   popularidade     Float?
 
   elenco        Elenco[]
@@ -48,7 +48,7 @@ model Pessoa {
 
 model Generos {
   id_generos Int    @id
-  nome       String @db.VarChar(45)
+  nome       String @db.Text
 
   generos_series Generos_series[]
   @@map("generos")
@@ -56,7 +56,7 @@ model Generos {
 
 model Plataforma {
   id_plataforma     Int                 @id
-  nome              String?             @db.VarChar(45)
+  nome              String?             @db.Text
   plataforma_series Plataforma_series[]
 
 
@@ -85,9 +85,9 @@ model Plataforma_series {
 
 model Temporadas {
   id_temporadas      Int     @id
-  nome               String  @db.VarChar(45)
+  nome               String  @db.Text
   descricao          String  @db.Text
-  link_foto          String? @db.VarChar(45)
+  link_foto          String? @db.Text
   quantidade_ep      Int     @db.SmallInt
   numero_temporarada Int
   series_id_series   Int
@@ -101,7 +101,7 @@ model Episodio {
   id_episodio              Int        @id
   numero_episodio          Int
   descricao                String     @db.Text
-  nome                     String     @db.VarChar(100)
+  nome                     String     @db.Text
   nota                     Float
   data_estreia             DateTime?
   temporadas_id_temporadas Int
@@ -116,7 +116,7 @@ model Elenco {
   pessoa_id_pessoa Int
   pessoa           Pessoa @relation(fields: [pessoa_id_pessoa], references: [id_pessoa])
 
-  personagem String? @db.VarChar(45)
+  personagem String? @db.Text
 
   serie_id_serie Int
   series         Series @relation(fields: [serie_id_serie], references: [id_series])
@@ -126,14 +126,14 @@ model Elenco {
 }
 
 model Trailer {
-  id_trailer       String  @id @db.VarChar(45)
-  nome             String? @db.VarChar(45)
-  key_trailer      String? @db.VarChar(45)
-  tipo             String? @db.VarChar(45)
+  id_trailer       String  @id @db.Text
+  nome             String? @db.Text
+  key_trailer      String? @db.Text
+  tipo             String? @db.Text
   series_id_series Int
   series           Series  @relation(fields: [series_id_series], references: [id_series])
 
-  website_plataform String? @db.VarChar(45)
+  website_plataform String? @db.Text
 
   @@map("trailer")
 }
