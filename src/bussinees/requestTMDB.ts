@@ -50,7 +50,7 @@ async function createPeople(id: number) {
   else { //Nao tem cadastro
     //Cria no banco a pessoa.
     try {
-      await new Promise(r => setTimeout(r, 3000));
+      await new Promise(r => setTimeout(r, 1000));
       const person = await axios.get(`https://api.themoviedb.org/3/person/${id}?api_key=${api_key}`) //busca pessoa
 
       await prismaClient.pessoa.create({
@@ -122,7 +122,7 @@ async function createElenco(idPessoa: number, idSerie: number, character: string
 
 async function createEpisode(episodeNumber: number, idSerie: number, season_number: number, idSeason: number) {
   try {
-
+    await new Promise(r => setTimeout(r, 1000));
     const episode = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/season/${season_number}/episode/${episodeNumber}?api_key=${api_key}`)
 
     const ver = await prismaClient.episodio.findFirst({
@@ -142,7 +142,7 @@ async function createEpisode(episodeNumber: number, idSerie: number, season_numb
         dataAr = new Date(episode.data.air_date)
       }
 
-      const newEp = await prismaClient.episodio.create({
+      await prismaClient.episodio.create({
         data: {
           id_episodio: episode.data.id,
           numero_episodio: episode.data.episode_number,
@@ -166,7 +166,7 @@ async function createEpisode(episodeNumber: number, idSerie: number, season_numb
 async function createSeason(season_number: number, idSerie: number, totalEp: number) {
   try {
 
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 500));
     const seasons = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/season/${season_number}?api_key=${api_key}`)
 
     const verSeason = await prismaClient.temporadas.findFirst({
@@ -192,24 +192,24 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
       });
 
       //Para cada episodio faça o seguinte
-      console.log("------ Cadastrando os Episodios da tempora ", season_number, " e Associando Elenco da serie ------------");
+      console.log("------ Cadastrando os Episodios da temporada ", season_number, " e Associando Elenco da serie ------------");
       for (const episode in seasons.data.episodes) {
         //Cria o episodio
-        await new Promise(r => setTimeout(r, 1000));
-        createEpisode(seasons.data.episodes[episode].episode_number, idSerie, season_number, seasons.data.id);
+
+        await createEpisode(seasons.data.episodes[episode].episode_number, idSerie, season_number, seasons.data.id);
 
         const stars = seasons.data.episodes[episode].guest_stars;
 
         if (stars && stars.length > 0) {
           //Para cada ator que estrelou a temporada da serie, adiciona ele ao cadastro pessoa e dps associa a elenco
           for (const star in stars) {
-            await new Promise(r => setTimeout(r, 1000));
+            // await new Promise(r => setTimeout(r, 1000));
             await createPeople(stars[star].id);
           }
 
           for (const star in stars) {
             // sleep
-            await new Promise(r => setTimeout(r, 1000));
+            // await new Promise(r => setTimeout(r, 1000));
             await createElenco(stars[star].id, idSerie, stars[star].character)
           }
         }
@@ -338,7 +338,7 @@ async function getSerieById(idSerie: number) {
       console.log("------ Cadastrando os criadores da serie: ", response.data.name, " ------------");
       for (const criador in response.data.created_by) {
         const idCriador = response.data.created_by[criador].id
-        await new Promise(r => setTimeout(r, 1000));
+        // await new Promise(r => setTimeout(r, 1000));
         await createPeople(idCriador);
         await createRelationCriador(idCriador, response.data.id)
       }
@@ -351,7 +351,6 @@ async function getSerieById(idSerie: number) {
       }
 
       //Para cada genero da serie, relaciona à serie.
-
       console.log("------ Associando Generos ------------");
       for (const genre in response.data.genres) {
         const idGenre = response.data.genres[genre].id
@@ -378,7 +377,7 @@ async function getSerieById(idSerie: number) {
 async function getGeneros() {
   try {
 
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 500));
     const generos = await axios.get(`https://api.themoviedb.org/3/genre/movie/list?api_key=${api_key}`)
 
     //Para cada genero cadastra com seu id e nome
@@ -404,7 +403,7 @@ async function getGeneros() {
 async function getTrailers(idSerie: number) {
   try {
 
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 500));
     const videos = await axios.get(`https://api.themoviedb.org/3/tv/${idSerie}/videos?api_key=${api_key}`)
 
     const videosRecebidos = videos.data.results
@@ -453,7 +452,7 @@ export class GetSeriesTmdb {
     //Carrega todos os generos na tabela de generos
     await getGeneros();
     //Definir quantas paginas de series buscaremos
-    const maxPage = 23; //Total é 67195 sendo 20 series por pagina
+    const maxPage = 24; //Total é 67195 sendo 20 series por pagina
     let page: number = 21;
 
     try {
