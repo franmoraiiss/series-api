@@ -29,9 +29,8 @@ async function createRelationCriador(idPerson: number, idSerie: number) {
         },
       });
       // console.log("Sucesso relação criador");
-      // return JSON.parse(data)
     } catch (error) {
-      console.log("Nao foi possivel Cadastrar relaçao de pessoa e serie");
+      // console.log("Nao foi possivel Cadastrar relaçao de pessoa e serie");
     }
   }
 }
@@ -74,7 +73,7 @@ async function createPeople(id: number) {
     }
     catch (error) {
       // console.log(error);
-      console.log("error id pessoa ->", id);
+      // console.log("error id pessoa ->", id);
 
     }
   }
@@ -115,7 +114,7 @@ async function createElenco(idPessoa: number, idSerie: number, character: string
         // console.log(idPessoa, " --> adicionada ao elenco da serie: ", idSerie);   
       }
       catch (error) {
-        console.log("Erro ao associar pessoa ao  Elenco", idPessoa);
+        // console.log("Erro ao associar pessoa ao  Elenco", idPessoa);
       }
     }
   }
@@ -160,7 +159,7 @@ async function createEpisode(episodeNumber: number, idSerie: number, season_numb
   }
   catch (error) {
     // console.log(error)
-    console.log("Erro ao criar episodio")
+    // console.log("Erro ao criar episodio")
   }
 }
 
@@ -193,7 +192,7 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
       });
 
       //Para cada episodio faça o seguinte
-      console.log("------ Cadastrando os Episodios da tempora , ", season_number, " ------------");
+      console.log("------ Cadastrando os Episodios da tempora ", season_number, " e Associando Elenco da serie ------------");
       for (const episode in seasons.data.episodes) {
         //Cria o episodio
         await new Promise(r => setTimeout(r, 1000));
@@ -207,7 +206,6 @@ async function createSeason(season_number: number, idSerie: number, totalEp: num
             await new Promise(r => setTimeout(r, 1000));
             await createPeople(stars[star].id);
           }
-          console.log("------ Cadastrando e Associando Elenco da serie ------------");
 
           for (const star in stars) {
             // sleep
@@ -459,8 +457,8 @@ export class GetSeriesTmdb {
     //Carrega todos os generos na tabela de generos
     await getGeneros();
     //Definir quantas paginas de series buscaremos
-    const maxPage = 2; //Total é 67195 sendo 20 series por pagina
-    let page: number = 1;
+    const maxPage = 21; //Total é 67195 sendo 20 series por pagina
+    let page: number = 20;
 
     try {
 
