@@ -265,14 +265,11 @@ async function createRelationPlataformaSerie(idPlataforma: number, idSeason: num
 
 //Função para associar genero e serie
 async function createRelationGenreSerie(idGenre: number, idSerie: number, nameGenre: string) {
-
   const verGenero = await prismaClient.generos.findFirst({
     where: {
       id_generos: idGenre,
     }
   })
-
-
 
   if (verGenero != null) {
     try {
@@ -282,7 +279,6 @@ async function createRelationGenreSerie(idGenre: number, idSerie: number, nameGe
           series_id_series: idSerie,
         },
       });
-
     }
     catch (error) {
       // console.log(error)
@@ -300,7 +296,7 @@ async function createRelationGenreSerie(idGenre: number, idSerie: number, nameGe
       await createRelationGenreSerie(idGenre, idSerie, nameGenre);
       console.log("Cadastrado novo genero");
     } catch (error) {
-
+      console.log(error)
     }
   }
 }
@@ -351,7 +347,7 @@ async function getSerieById(idSerie: number) {
 
       //Adicionar cada temporada 
       for (const season in response.data.seasons) {
-        createSeason(response.data.seasons[season].season_number, response.data.id, response.data.seasons[season].episode_count)
+        await createSeason(response.data.seasons[season].season_number, response.data.id, response.data.seasons[season].episode_count)
       }
 
       //Para cada genero da serie, relaciona à serie.
@@ -457,8 +453,8 @@ export class GetSeriesTmdb {
     //Carrega todos os generos na tabela de generos
     await getGeneros();
     //Definir quantas paginas de series buscaremos
-    const maxPage = 21; //Total é 67195 sendo 20 series por pagina
-    let page: number = 20;
+    const maxPage = 23; //Total é 67195 sendo 20 series por pagina
+    let page: number = 21;
 
     try {
 
