@@ -27,6 +27,7 @@ model Series {
   trailer           Trailer[]
   criador_serie     Criador_serie[]
   plataforma_series Plataforma_series[]
+  @@index([nome])
   @@map("series")
 }
 
@@ -43,6 +44,7 @@ model Pessoa {
 
   elenco        Elenco[]
   criador_serie Criador_serie[]
+  @@index([nome])
   @@map("pessoas")
 }
 
@@ -94,6 +96,7 @@ model Temporadas {
   series             Series  @relation(fields: [series_id_series], references: [id_series])
 
   episodio Episodio[]
+  @@index([series_id_series])
   @@map("temporadas")
 }
 
@@ -109,6 +112,7 @@ model Episodio {
   temporadas_id_series     Int
   series                   Series     @relation(fields: [temporadas_id_series], references: [id_series])
 
+  @@index([temporadas_id_temporadas])
   @@map("episodio")
 }
 
@@ -121,7 +125,9 @@ model Elenco {
   serie_id_serie Int
   series         Series @relation(fields: [serie_id_serie], references: [id_series])
 
+
   @@id([pessoa_id_pessoa, serie_id_serie])
+  @@index([personagem])
   @@map("elenco")
 }
 
