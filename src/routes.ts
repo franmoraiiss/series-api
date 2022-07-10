@@ -1,17 +1,20 @@
 import { Router } from "express";
 import { GetSeriesTmdb } from "./bussinees/requestTMDB";
-import { FindGenderController } from "./controllers/FindGenderController";
+import { FindEpisodioController } from "./controllers/FindEpisodioController";
+import { FindSeriesController } from "./controllers/FindSeriesController";
 import { FindPeopleController } from "./controllers/FindPeopleController";
 
 const router = Router();
 
 // Controllers
 const getSeriesTmdb = new GetSeriesTmdb();
-const getGender = new FindGenderController();
+const getSeries = new FindSeriesController();
 const getPeople = new FindPeopleController();
+const getEpisodio = new FindEpisodioController();
 
-router.get("/generos", getGender.handle);
+router.get("/series", getSeries.handle);
 router.get("/pessoas", getPeople.handle);
+router.get("/episodios", getEpisodio.handle);
 
 router.get("/seriestmdb", getSeriesTmdb.handle);
 

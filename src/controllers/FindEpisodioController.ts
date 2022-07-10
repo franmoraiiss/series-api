@@ -1,28 +1,41 @@
 import { Request, Response } from "express";
 import { prismaClient } from "../database/prismaClient";
 
-export class FindPeopleController {
+export class FindEpisodioController {
   async handle(request: Request, response: Response) {
-    const { id, name, skip, take, orderBy, points, } = request.body;
+    const { id, name, skip, take, orderBy, points, streaming } = request.body;
 
-    const peoples = await prismaClient.episodio.findMany({
+    const series = await prismaClient.episodio.findMany({
       take: take,
       skip: skip,
       where: {
         id_episodio: id,
-        nome: {
-          contains: name,
-        },
+        nome: name,
         nota: points,
-        series:
+        series: {
+          plataforma_series: {
+            every: {
+              plataforma: {
+                id_plataforma: streaming,
+              },
+            },
+          },
+        },
+      },
+      include: {
+        series: {
+          include: {
+            plataforma_series: true,
+          },
+        },
       },
       orderBy: {
         id_episodio: orderBy || "asc",
       },
     });
 
-    if (peoples) {
-      return response.status(200).json(peoples);
+    if (series) {
+      return response.status(200).json(series);
     } else {
       return response.status(500);
     }
