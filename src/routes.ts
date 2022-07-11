@@ -12,7 +12,7 @@ const getSeries = new FindSeriesController();
 const getPeople = new FindPeopleController();
 const getEpisodio = new FindEpisodioController();
 
-router.get("/series", getSeries.handle);
+router.post("/series", getSeries.handle);
 router.get("/pessoas", getPeople.handle);
 router.get("/episodios", getEpisodio.handle);
 
