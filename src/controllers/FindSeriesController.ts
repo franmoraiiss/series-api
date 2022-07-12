@@ -25,7 +25,9 @@ export class FindSeriesController {
       skip: skip,
       where: {
         id_series: id,
-        nome: name,
+        nome: {
+          contains: name,
+        },
         elenco: {
           some: {
             personagem: character,

@@ -3,7 +3,8 @@ import { prismaClient } from "../database/prismaClient";
 
 export class FindEpisodioController {
   async handle(request: Request, response: Response) {
-    const { id, name, skip, take, orderBy, points, streaming } = request.body;
+    const { id, name, skip, take, orderBy, points, streaming_id, streaming } =
+      request.body;
 
     const series = await prismaClient.episodio.findMany({
       take: take,
@@ -16,7 +17,8 @@ export class FindEpisodioController {
           plataforma_series: {
             every: {
               plataforma: {
-                id_plataforma: streaming,
+                id_plataforma: streaming_id,
+                nome: streaming,
               },
             },
           },
